@@ -1,30 +1,23 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Header from "./components/Header";
 import Form from "./components/Form";
 import Todos from "./components/Todos";
 
 const App = () => {
-  const [todos, setTodos] = useState([
-    {
-      id: 1,
-      text: "Double Click Todos to Toggle Reminder",
-      date: "2022-08-14",
-      time: "1:00",
-      reminder: true,
-    },
-    {
-      id: 2,
-      text: "This is my first React App",
-      date: "2022-08-14",
-      time: "24:00",
-      reminder: false,
-    },
-  ]);
+  const [todos, setTodos] = useState(() => {
+    const todoLS = localStorage.getItem("todos");
+    return todoLS ? JSON.parse(todoLS) : [];
+  });
+
+  useEffect(() => updateLS(), [todos]);
+
+  const updateLS = () => localStorage.setItem("todos", JSON.stringify(todos));
 
   const addTodo = (todo) => {
     const id = Math.floor(Math.random() * 10000);
     const newTodo = { id, ...todo };
     setTodos([newTodo, ...todos]);
+    updateLS();
   };
 
   const deleteTodo = (id) => {
